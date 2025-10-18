@@ -34,6 +34,57 @@
         overflow-x: auto;
         white-space: nowrap;
       }
+      .search-container {
+        background: #fff;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #eee;
+      }
+      .search-box {
+        position: relative;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .search-input {
+        width: 100%;
+        padding: 12px 40px 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 25px;
+        font-size: 0.95em;
+        outline: none;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+      }
+      .search-input:focus {
+        border-color: #3b82f6;
+      }
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 1.2em;
+        cursor: pointer;
+      }
+      .search-clear {
+        position: absolute;
+        right: 35px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 1.1em;
+        cursor: pointer;
+        display: none;
+      }
+      .search-results {
+        background: #f8f9fa;
+        padding: 8px 16px;
+        text-align: center;
+        color: #666;
+        font-size: 0.9em;
+        display: none;
+      }
       .nav-item {
         display: inline-block;
         background: #f8f9fa;
@@ -157,6 +208,24 @@
       <span style="font-size: 1.5em; color: #3b82f6">&#127471;&#127472;</span>
     </div>
     <div class="ion-content" id="main-content">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <div class="search-box">
+          <input 
+            type="text" 
+            class="search-input" 
+            id="search-input"
+            placeholder="搜尋香港趣聞..."
+            oninput="handleSearch()"
+          />
+          <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+      
+      <!-- Search Results Info -->
+      <div class="search-results" id="search-results"></div>
+      
       <!-- Navigation Bar -->
       <div class="nav-bar">
         <button class="nav-item active" onclick="filterCategory('all')">全部</button>
@@ -271,8 +340,16 @@
       let current = 0;
       let filteredProfiles = [...profiles];
       let currentCategory = 'all';
+      let searchTerm = '';
 
       function renderProfile(idx) {
+        if (filteredProfiles.length === 0) {
+          // 顯示無結果狀態
+          document.getElementById("profile-card").style.display = "none";
+          return;
+        }
+        
+        document.getElementById("profile-card").style.display = "block";
         const p = filteredProfiles[idx];
         document.getElementById("profile-img").src = p.img;
         document.getElementById("profile-name").textContent = p.name;
@@ -284,22 +361,27 @@
         document.getElementById("profile-tags").innerHTML = tags;
       }
       function nextProfile() {
+        if (filteredProfiles.length === 0) return;
         current = (current + 1) % filteredProfiles.length;
         renderProfile(current);
       }
       function prevProfile() {
+        if (filteredProfiles.length === 0) return;
         current = (current - 1 + filteredProfiles.length) % filteredProfiles.length;
         renderProfile(current);
       }
       function like() {
+        if (filteredProfiles.length === 0) return;
         alert(`你覺得 ${filteredProfiles[current].name} 很有趣！`);
         nextProfile();
       }
       function dislike() {
+        if (filteredProfiles.length === 0) return;
         alert(`你覺得 ${filteredProfiles[current].name} 很無聊。`);
         nextProfile();
       }
       function superLike() {
+        if (filteredProfiles.length === 0) return;
         alert(`哇！${filteredProfiles[current].name} 太神奇了！`);
         nextProfile();
       }
@@ -311,19 +393,100 @@
         });
         event.target.classList.add('active');
         
-        // 篩選內容
+        // 更新分類
         currentCategory = category;
-        if (category === 'all') {
-          filteredProfiles = [...profiles];
+        
+        // 應用篩選
+        applyFilters();
+      }
+      
+      function handleSearch() {
+        const input = document.getElementById('search-input');
+        const clearBtn = document.getElementById('search-clear');
+        
+        searchTerm = input.value.trim();
+        
+        // 顯示/隱藏清除按鈕
+        if (searchTerm) {
+          clearBtn.style.display = 'block';
         } else {
-          filteredProfiles = profiles.filter(profile => profile.category === category);
+          clearBtn.style.display = 'none';
         }
+        
+        // 應用篩選
+        applyFilters();
+      }
+      
+      function clearSearch() {
+        const input = document.getElementById('search-input');
+        const clearBtn = document.getElementById('search-clear');
+        
+        input.value = '';
+        searchTerm = '';
+        clearBtn.style.display = 'none';
+        
+        // 應用篩選
+        applyFilters();
+      }
+      
+      function applyFilters() {
+        let results = [...profiles];
+        
+        // 應用分類篩選
+        if (currentCategory !== 'all') {
+          results = results.filter(profile => profile.category === currentCategory);
+        }
+        
+        // 應用搜尋篩選
+        if (searchTerm) {
+          results = results.filter(profile => {
+            return profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                   profile.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                   profile.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+          });
+        }
+        
+        filteredProfiles = results;
+        
+        // 更新搜尋結果顯示
+        updateSearchResults();
         
         // 重置索引並顯示第一個項目
         current = 0;
-        if (filteredProfiles.length > 0) {
-          renderProfile(current);
+        renderProfile(current);
+      }
+      
+      function updateSearchResults() {
+        const resultsDiv = document.getElementById('search-results');
+        
+        if (searchTerm || currentCategory !== 'all') {
+          let message = '';
+          
+          if (searchTerm && currentCategory !== 'all') {
+            message = `在「${getCategoryName(currentCategory)}」中搜尋「${searchTerm}」：找到 ${filteredProfiles.length} 個結果`;
+          } else if (searchTerm) {
+            message = `搜尋「${searchTerm}」：找到 ${filteredProfiles.length} 個結果`;
+          } else {
+            message = `「${getCategoryName(currentCategory)}」分類：${filteredProfiles.length} 個結果`;
+          }
+          
+          resultsDiv.textContent = message;
+          resultsDiv.style.display = 'block';
+        } else {
+          resultsDiv.style.display = 'none';
         }
+      }
+      
+      function getCategoryName(category) {
+        const categoryNames = {
+          'history': '歷史',
+          'culture': '文化',
+          'food': '美食',
+          'transport': '交通',
+          'architecture': '建築',
+          'nature': '自然'
+        };
+        return categoryNames[category] || category;
       }
 
       // 初始化
