@@ -96,6 +96,29 @@
           .join("");
         document.getElementById("profile-tags").innerHTML = tags;
       }
+      function nextProfile() {
+        current = (current + 1) % profiles.length;
+        renderProfile(current);
+      }
+      function prevProfile() {
+        current = (current - 1 + profiles.length) % profiles.length;
+        renderProfile(current);
+      }
+      function like() {
+        alert(`你喜歡了 ${profiles[current].name}！`);
+        nextProfile();
+      }
+      function dislike() {
+        alert(`你不喜歡 ${profiles[current].name}。`);
+        nextProfile();
+      }
+      function superLike() {
+        alert(`你超級喜歡 ${profiles[current].name}！`);
+        nextProfile();
+      }
+
+      // 初始化
+      renderProfile(current);
     </script>
   </body>
 </html>
