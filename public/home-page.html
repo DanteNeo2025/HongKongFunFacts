@@ -27,6 +27,36 @@
         padding: 0;
         margin-bottom: 56px;
       }
+      .nav-bar {
+        background: #fff;
+        padding: 12px 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .nav-item {
+        display: inline-block;
+        background: #f8f9fa;
+        color: #666;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+        margin-right: 8px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .nav-item.active {
+        background: #3b82f6;
+        color: #fff;
+      }
+      .nav-item:hover {
+        background: #e2e8f0;
+      }
+      .nav-item.active:hover {
+        background: #2563eb;
+      }
       .profile-card {
         background: #fff;
         border-radius: 16px;
@@ -127,6 +157,17 @@
       <span style="font-size: 1.5em; color: #3b82f6">&#127471;&#127472;</span>
     </div>
     <div class="ion-content" id="main-content">
+      <!-- Navigation Bar -->
+      <div class="nav-bar">
+        <button class="nav-item active" onclick="filterCategory('all')">全部</button>
+        <button class="nav-item" onclick="filterCategory('history')">歷史</button>
+        <button class="nav-item" onclick="filterCategory('culture')">文化</button>
+        <button class="nav-item" onclick="filterCategory('food')">美食</button>
+        <button class="nav-item" onclick="filterCategory('transport')">交通</button>
+        <button class="nav-item" onclick="filterCategory('architecture')">建築</button>
+        <button class="nav-item" onclick="filterCategory('nature')">自然</button>
+      </div>
+      
       <!-- Fun Fact Card -->
       <div class="profile-card" id="profile-card">
         <img
@@ -183,6 +224,7 @@
           img: "https://images.unsplash.com/photo-1518639192441-8fce0c03d015?w=400",
           bio: "天星小輪是世界上最古老的渡輪服務之一，至今已有超過130年歷史！它不僅是香港的交通工具，更是香港文化的重要象徵。",
           tags: ["歷史", "交通", "文化"],
+          category: "transport"
         },
         {
           name: "茶餐廳文化",
@@ -190,6 +232,7 @@
           img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400",
           bio: "茶餐廳是香港獨有的飲食文化，融合了中西飲食特色。奶茶、菠蘿包、絲襪奶茶都是茶餐廳的經典美食！",
           tags: ["美食", "文化", "本土"],
+          category: "food"
         },
         {
           name: "叮叮車",
@@ -197,12 +240,40 @@
           img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400",
           bio: "香港電車被稱為「叮叮車」，是全世界唯一仍在營運的雙層電車系統！每日載客量達20萬人次。",
           tags: ["交通", "歷史", "獨特"],
+          category: "transport"
         },
+        {
+          name: "維多利亞港",
+          age: "天然海港",
+          img: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=400",
+          bio: "維多利亞港是世界三大天然良港之一，港闊水深，四季不凍。每晚8點的「幻彩詠香江」燈光秀被金氏世界紀錄認證為全球最大型燈光音樂匯演！",
+          tags: ["自然", "夜景", "世界紀錄"],
+          category: "nature"
+        },
+        {
+          name: "國際金融中心",
+          age: "2003年",
+          img: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=400",
+          bio: "IFC二期高達415米，曾是香港最高建築物。其獨特的設計靈感來自竹子，象徵著香港的成長與活力。",
+          tags: ["建築", "地標", "現代"],
+          category: "architecture"
+        },
+        {
+          name: "粵劇文化",
+          age: "清朝",
+          img: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
+          bio: "粵劇被聯合國教科文組織列為人類非物質文化遺產。香港是粵劇重要的傳承地，至今仍有多個粵劇團體活躍演出。",
+          tags: ["文化", "傳統", "非遺"],
+          category: "culture"
+        }
       ];
+      
       let current = 0;
+      let filteredProfiles = [...profiles];
+      let currentCategory = 'all';
 
       function renderProfile(idx) {
-        const p = profiles[idx];
+        const p = filteredProfiles[idx];
         document.getElementById("profile-img").src = p.img;
         document.getElementById("profile-name").textContent = p.name;
         document.getElementById("profile-age").textContent = p.age;
@@ -213,24 +284,46 @@
         document.getElementById("profile-tags").innerHTML = tags;
       }
       function nextProfile() {
-        current = (current + 1) % profiles.length;
+        current = (current + 1) % filteredProfiles.length;
         renderProfile(current);
       }
       function prevProfile() {
-        current = (current - 1 + profiles.length) % profiles.length;
+        current = (current - 1 + filteredProfiles.length) % filteredProfiles.length;
         renderProfile(current);
       }
       function like() {
-        alert(`你覺得 ${profiles[current].name} 很有趣！`);
+        alert(`你覺得 ${filteredProfiles[current].name} 很有趣！`);
         nextProfile();
       }
       function dislike() {
-        alert(`你覺得 ${profiles[current].name} 很無聊。`);
+        alert(`你覺得 ${filteredProfiles[current].name} 很無聊。`);
         nextProfile();
       }
       function superLike() {
-        alert(`哇！${profiles[current].name} 太神奇了！`);
+        alert(`哇！${filteredProfiles[current].name} 太神奇了！`);
         nextProfile();
+      }
+      
+      function filterCategory(category) {
+        // 更新導航欄活躍狀態
+        document.querySelectorAll('.nav-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // 篩選內容
+        currentCategory = category;
+        if (category === 'all') {
+          filteredProfiles = [...profiles];
+        } else {
+          filteredProfiles = profiles.filter(profile => profile.category === category);
+        }
+        
+        // 重置索引並顯示第一個項目
+        current = 0;
+        if (filteredProfiles.length > 0) {
+          renderProfile(current);
+        }
       }
 
       // 初始化
