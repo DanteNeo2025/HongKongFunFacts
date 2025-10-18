@@ -59,30 +59,43 @@
       <button class="ion-tab-btn" title="個人">&#128100;</button>
     </div>
     <script>
-    // 假資料
-    const profiles = [
-      {
-        name: "Anna",
-        age: 23,
-        img: "https://randomuser.me/api/portraits/women/44.jpg",
-        bio: "喜歡旅行、攝影和咖啡。尋找有趣的靈魂一起探索世界！",
-        tags: ["旅行", "攝影", "咖啡"]
-      },
-      {
-        name: "Ben",
-        age: 27,
-        img: "https://randomuser.me/api/portraits/men/32.jpg",
-        bio: "熱愛運動和音樂，喜歡戶外活動。",
-        tags: ["運動", "音樂", "戶外"]
-      },
-      {
-        name: "Cathy",
-        age: 21,
-        img: "https://randomuser.me/api/portraits/women/68.jpg",
-        bio: "美食愛好者，喜歡下廚和品嚐各地美食。",
-        tags: ["美食", "下廚", "旅行"]
+      // 假資料
+      const profiles = [
+        {
+          name: "Anna",
+          age: 23,
+          img: "https://randomuser.me/api/portraits/women/44.jpg",
+          bio: "喜歡旅行、攝影和咖啡。尋找有趣的靈魂一起探索世界！",
+          tags: ["旅行", "攝影", "咖啡"],
+        },
+        {
+          name: "Ben",
+          age: 27,
+          img: "https://randomuser.me/api/portraits/men/32.jpg",
+          bio: "熱愛運動和音樂，喜歡戶外活動。",
+          tags: ["運動", "音樂", "戶外"],
+        },
+        {
+          name: "Cathy",
+          age: 21,
+          img: "https://randomuser.me/api/portraits/women/68.jpg",
+          bio: "美食愛好者，喜歡下廚和品嚐各地美食。",
+          tags: ["美食", "下廚", "旅行"],
+        },
+      ];
+      let current = 0;
+
+      function renderProfile(idx) {
+        const p = profiles[idx];
+        document.getElementById("profile-img").src = p.img;
+        document.getElementById("profile-name").textContent = p.name;
+        document.getElementById("profile-age").textContent = p.age;
+        document.getElementById("profile-bio").textContent = p.bio;
+        const tags = p.tags
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("");
+        document.getElementById("profile-tags").innerHTML = tags;
       }
-    ];
     </script>
   </body>
 </html>
