@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/img/icon32x32.png" sizes="16x16" />
-    <title>PBC聚賬通</title>
+    <title>香港趣聞</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -18,7 +18,7 @@
   <body class="flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-lg shadow-md w-96">
       <h2 id="formTitle" class="text-2xl text-center font-bold mb-6">
-        PBC聚賬通-註冊
+        香港趣聞-註冊
       </h2>
 
       <form id="registerForm" class="form active">
@@ -115,14 +115,14 @@
         event.preventDefault();
         registerForm.classList.add("hidden");
         loginForm.classList.remove("hidden");
-        formTitle.textContent = "PBC聚賬通-登入";
+        formTitle.textContent = "香港趣聞-登入";
       });
 
       showRegister.addEventListener("click", function (event) {
         event.preventDefault();
         loginForm.classList.add("hidden");
         registerForm.classList.remove("hidden");
-        formTitle.textContent = "PBC聚賬通-註冊";
+        formTitle.textContent = "香港趣聞-註冊";
       });
     </script>
   </body>
